@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>めぐるの開運診断</title>
+<meta name="description" content="今、あなたの運はどの時期？ 8つの質問から読む、めぐるの開運診断。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kinari:#fbf3e2;
+    --paper:#fffaf0;
+    --choco:#3b2f25;
+    --dim:#7a6a58;
+    --gold:#b8924a;
+    --gold-deep:#8a5f1c;
+    --gold-pale:#f3d88f;
+    --line:#d9bd80;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    min-height:100vh;
+    color:var(--choco);
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 0%, rgba(243,216,143,.35), transparent 70%),
+      linear-gradient(180deg,#fdf6e7,var(--kinari) 40%,#f6ead0);
+    background-attachment:fixed;
+    font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+    overflow-x:hidden;
+  }
+  .hero{ max-width:560px; margin:0 auto; position:relative; }
+  .hero img{ display:block; width:100%; aspect-ratio:3/2; object-fit:cover; }
+  .hero::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:30%;
+    background:linear-gradient(180deg, transparent, var(--kinari)); }
+  .wrap{ position:relative; max-width:560px; margin:0 auto; padding:6px 16px 64px; }
+  .screen{ display:none; animation:fade .6s ease; }
+  .screen.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+  .hide-hero .hero{ display:none; }
+  .hide-hero .wrap{ padding-top:34px; }
+
+  .brand{ text-align:center; font-family:'Shippori Mincho',serif; font-size:12px; letter-spacing:.3em; color:var(--gold-deep); margin:0 0 8px; }
+  h1{ font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif; font-weight:700; font-size:28px; letter-spacing:.14em; text-align:center; margin:0 0 10px; color:var(--choco); }
+  .subtitle{ text-align:center; font-family:'Shippori Mincho',serif; font-size:16px; letter-spacing:.06em; color:var(--gold-deep); margin:0 0 26px; word-break:auto-phrase; }
+  .rule{ width:64px; height:1px; background:var(--gold); margin:0 auto 26px; }
+  .lead{ font-family:'Shippori Mincho',serif; font-size:15.5px; line-height:2.1; text-align:center; margin:0 0 32px; word-break:auto-phrase; }
+  .center{ text-align:center; }
+
+  button{ font-family:inherit; cursor:pointer; color:inherit; -webkit-tap-highlight-color:transparent; }
+  .btn-main{ display:inline-block; font-family:'Shippori Mincho',serif; font-size:16px; font-weight:700; letter-spacing:.16em; padding:15px 44px; border:1px solid var(--gold-deep); border-radius:999px; background:linear-gradient(180deg,#c9a45e,var(--gold-deep)); color:#fffaf0; text-decoration:none; box-shadow:0 6px 16px rgba(138,95,28,.25); transition:transform .15s ease, box-shadow .2s ease; }
+  .btn-main:hover{ box-shadow:0 8px 22px rgba(138,95,28,.35); }
+  .btn-main:active{ transform:translateY(1px); }
+  .btn-main[aria-disabled="true"]{ opacity:.5; pointer-events:none; }
+  .btn-ghost{ background:transparent; border:1px solid var(--line); border-radius:999px; padding:10px 26px; font-size:13px; letter-spacing:.1em; color:var(--dim); }
+  .btn-ghost:hover{ border-color:var(--gold); color:var(--choco); }
+
+  /* 質問 */
+  .progress{ display:flex; align-items:center; gap:12px; margin-bottom:26px; font-size:12px; letter-spacing:.14em; color:var(--dim); }
+  .bar{ flex:1; height:3px; border-radius:2px; background:rgba(184,146,74,.2); overflow:hidden; }
+  .bar span{ display:block; height:100%; width:0; background:var(--gold); transition:width .35s ease; }
+  .q-text{ font-family:'Shippori Mincho',serif; font-size:19px; font-weight:700; line-height:1.8; margin:0 0 22px; color:var(--choco); word-break:auto-phrase; }
+  .options{ display:grid; gap:10px; }
+  .opt{ width:100%; text-align:left; font-size:15px; line-height:1.7; padding:15px 16px; border:1px solid var(--line); border-radius:10px; background:var(--paper); transition:border-color .15s ease, background .15s ease, transform .1s ease; }
+  .opt:hover{ border-color:var(--gold); }
+  .opt:active, .opt.picked{ border-color:var(--gold-deep); background:#f8e9c4; transform:scale(.995); }
+  .back-row{ margin-top:22px; text-align:center; min-height:38px; }
+
+  /* 読んでいる間 */
+  .seeing{ text-align:center; padding:70px 0 40px; }
+  .clock{ position:relative; width:96px; height:96px; margin:0 auto 26px; border-radius:50%; border:2px solid var(--gold); background:var(--paper); box-shadow:0 0 0 6px rgba(243,216,143,.35); }
+  .clock::before{ content:""; position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:var(--gold-deep); }
+  .clock .hand{ position:absolute; left:50%; bottom:50%; width:2px; height:36px; margin-left:-1px; background:var(--gold-deep); transform-origin:50% 100%; animation:turn 2.5s linear infinite; }
+  .clock .hand.short{ height:24px; width:3px; margin-left:-1.5px; animation-duration:15s; }
+  @keyframes turn{ to{ transform:rotate(360deg); } }
+  .seeing p{ font-family:'Shippori Mincho',serif; font-size:16px; letter-spacing:.12em; color:var(--gold-deep); }
+
+  /* 結果 */
+  .result-label{ text-align:center; font-size:13px; letter-spacing:.16em; color:var(--dim); margin:0 0 12px; }
+  .result-type{ font-family:'Shippori Mincho',serif; font-size:34px; font-weight:700; letter-spacing:.14em; text-align:center; color:var(--choco); margin:0 0 18px; }
+  .word{ font-family:'Shippori Mincho',serif; font-size:17px; line-height:1.9; text-align:center; color:var(--gold-deep); margin:0 0 28px; padding:0 6px; word-break:auto-phrase; text-wrap:balance; }
+  .card{ border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:22px 18px; margin-bottom:14px; }
+  .card p{ margin:0 0 14px; font-size:15px; line-height:2; word-break:auto-phrase; }
+  .card p:last-child{ margin-bottom:0; }
+  .card h2{ font-family:'Shippori Mincho',serif; font-size:14px; font-weight:700; letter-spacing:.16em; color:var(--gold-deep); margin:0 0 12px; padding-left:10px; border-left:3px solid var(--gold); }
+  .card.step{ border-color:var(--gold); background:#fcf1d8; }
+  .invite{ margin-top:34px; text-align:center; }
+  .invite p{ font-family:'Shippori Mincho',serif; font-size:15px; line-height:2.1; margin:0 0 22px; word-break:auto-phrase; }
+  .invite .note{ font-family:inherit; font-size:12px; color:var(--dim); margin-top:12px; }
+  .again{ margin-top:30px; text-align:center; }
+  footer{ margin-top:46px; text-align:center; font-size:11px; line-height:1.9; color:var(--dim); }
+</style>
+</head>
+<body>
+<div class="hero" aria-hidden="true"><img src="images/top.webp" alt=""></div>
+<div class="wrap">
+
+  <!-- 入口 -->
+  <section class="screen active" id="screen-intro">
+    <p class="brand">めぐるの開運相談室</p>
+    <h1>めぐるの開運診断</h1>
+    <p class="subtitle">今、あなたの運は<br>どの時期？</p>
+    <div class="rule"></div>
+    <p class="lead">
+      今のあなたの運がどんな時期にいるのか、<br>
+      8つの質問から読ませてください。<br>
+      1分ほどで終わります。<br><br>
+      深く考えなくて大丈夫です。<br>いちばん近いものを選んでください。
+    </p>
+    <div class="center">
+      <button class="btn-main" id="startBtn" type="button">はじめる</button>
+    </div>
+  </section>
+
+  <!-- 質問 -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress">
+      <span id="progressText">1 / 8</span>
+      <div class="bar"><span id="progressBar"></span></div>
+    </div>
+    <h2 class="q-text" id="qText"></h2>
+    <div class="options" id="options"></div>
+    <div class="back-row">
+      <button class="btn-ghost" id="backBtn" type="button">ひとつ前に戻る</button>
+    </div>
+  </section>
+
+  <!-- 読んでいる間 -->
+  <section class="screen" id="screen-seeing">
+    <div class="seeing"><div class="clock"><div class="hand short"></div><div class="hand"></div></div><p id="seeingText">読んでいます……</p></div>
+  </section>
+
+  <!-- 結果 -->
+  <section class="screen" id="screen-result">
+    <p class="result-label">今のあなたは</p>
+    <h1 class="result-type" id="resultType"></h1>
+    <p class="word" id="resultWord"></p>
+
+    <div class="card">
+      <h2>この時期によくあること</h2>
+      <div id="resultBody"></div>
+    </div>
+
+    <div class="card">
+      <h2>この時期にやってはいけないこと</h2>
+      <p id="resultNg"></p>
+    </div>
+
+    <div class="card step">
+      <h2>今日の一歩</h2>
+      <p id="resultStep"></p>
+    </div>
+
+    <div class="invite">
+      <p>
+        ここまでの話は、同じ答え方をした人<br>みんなに言えることです。<br><br>
+        あなたの運が、次に本当に動くのはいつか。<br>
+        それは、あなたの生まれた日から読むと<br>見えてきます。<br><br>
+        公式LINEで、あなた一人の時期を、<br>無料で一度だけ読ませてください。
+      </p>
+      <a class="btn-main" id="lineBtn" href="#" target="_blank" rel="noopener">LINEで読んでもらう</a>
+      <p class="note" id="lineNote" hidden>LINEは準備中です。もう少しお待ちください。</p>
+    </div>
+
+    <div class="again">
+      <button class="btn-ghost" id="retryBtn" type="button">もう一度診断する</button>
+    </div>
+  </section>
+
+  <footer>
+    この診断は、今の気持ちから時期の傾向を読む読みものです。<br>
+    結果を約束するものではありません。
+  </footer>
+</div>
+
+<script>
+/* ====== 設定：LINE ======
+   LINE_URL : 友だち追加のURL。空の時は「LINEは準備中」と出る */
+const LINE_URL = "https://lin.ee/5lMRPvH";
+/* ====== 数を数える：Googleスプレッドシートの記録用URL（Apps Script のウェブアプリ）を入れる ======
+   空の時は何も送らない。送るのは「開いた・始めた・終えた（時期）・LINEを押した」と時刻だけ。名前や答えの中身は送らない */
+const COUNT_URL = "";
+function count(ev, type){
+  if(!COUNT_URL) return;
+  try{
+    const body = JSON.stringify({ ev:ev, type:type || "", ref:document.referrer || "" });
+    if(navigator.sendBeacon) navigator.sendBeacon(COUNT_URL, body);
+    else fetch(COUNT_URL, { method:"POST", body:body, mode:"no-cors", keepalive:true });
+  }catch(e){}
+}
+count("open");
+
+/* ====== 質問（a=動き出す / b=育てる / c=受け取る / d=整える） ====== */
+const QUESTIONS = [
+  { q: "最近、朝起きて最初に浮かぶのは？",
+    o: { a:"今日も同じ一日か、という気持ち",
+         b:"やることは多いのに、何も進んでいない気がする",
+         c:"また自分ばかり動くのか、という気持ち",
+         d:"体が重くて、起き上がりたくない" } },
+  { q: "お金のことで、最近いちばん思うのは？",
+    o: { a:"今の収入のままでは、この先が不安",
+         b:"節約しているのに、ちっともたまらない",
+         c:"人のためには使えるのに、自分には使えない",
+         d:"気づくと、思ったより出ていっている" } },
+  { q: "人から何かを頼まれた時、最近のあなたは？",
+    o: { a:"引き受けながら、ほかにやりたいことが頭をよぎる",
+         b:"引き受けたら、最後まで一人でやってしまう",
+         c:"本当は手伝ってほしいのに、自分からは言い出せない",
+         d:"正直、もう余裕がない" } },
+  { q: "夜、ひとりになった時に考えてしまうのは？",
+    o: { a:"このままの毎日で、いいのかな",
+         b:"こんなにやっているのに、なんで報われないんだろう",
+         c:"私ばかり我慢している気がする",
+         d:"何も考えたくない。考えるのも疲れた" } },
+  { q: "SNSで、人のうまくいっている投稿を見た時は？",
+    o: { a:"私も何か始めないと、置いていかれる気がする",
+         b:"みんな、どうしてあんなに簡単にうまくいくんだろう",
+         c:"うらやましいけれど、自分が欲しがるのは気が引ける",
+         d:"見ているだけで疲れて、閉じてしまう" } },
+  { q: "「最近どう？」と聞かれたら、浮かぶ言葉は？",
+    o: { a:"「なんか、変わりたいんだよね」",
+         b:"「がんばってるんだけど、なかなかね」",
+         c:"「まあ、私は大丈夫」",
+         d:"「ちょっと疲れてて」" } },
+  { q: "ここ最近の自分に、いちばん近い言葉は？",
+    o: { a:"じっとしていられない",
+         b:"がんばり損",
+         c:"いつも後回し",
+         d:"電池切れ" } },
+  { q: "これから半年で、いちばんほしいものは？",
+    o: { a:"変わるための、きっかけ",
+         b:"続けてきたことの、手応え",
+         c:"がんばった分が、ちゃんと返ってくること",
+         d:"心も体も、すっきり軽くなること" } }
+];
+
+/* ====== 結果 ====== */
+const RESULTS = {
+  a: { type:"動き出す時期",
+       word:"運が、あなたを次へ押し出そうとしています。",
+       body:[
+         "今の毎日に、どこか飽きている。このままでいいのか、と何度も思う。動き出す時期には、そういう落ち着かなさが出てきます。",
+         "この時期は、長くは続きません。動かずに見送ると、押す力は弱まり、また同じ毎日に戻ります。「いつか」と言っているうちに、いちばん動きやすい時を過ごしてしまう人が多い時期です。" ],
+       ng:"準備が整うまで待つこと。全部調べてから、と先に延ばすと、この時期の運は使われないまま終わります。人の意見を集めすぎるのも、足を止めるもとです。",
+       step:"気になっていることを一つ、今日のうちに申し込むか、予約するところまで進めてください。調べるだけでは、この時期の運は動きません。" },
+  b: { type:"育てる時期",
+       word:"あなたの運は今、結果が出る前の、いちばん地味な所にいます。",
+       body:[
+         "やっているのに、変わらない。がんばりが、どこにも届いていない気がする。育てる時期は、手応えがいちばん少ない時期です。",
+         "そして、投げ出す人がいちばん多い時期でもあります。根が張りきる前にやめると、それまで続けた分は形にならずに終わります。ここを越えた人から、次の時期に運が返ってきます。" ],
+       ng:"結果が出ないからと、やり方を次々に変えること。あれもこれもと手を広げると、どれも根を張らないまま終わります。人と比べて焦るのも、この時期にはいちばん損をします。",
+       step:"今続けていることを、一つだけ選んでください。ほかの新しいことには、次の時期まで手を出さないと決めてください。" },
+  c: { type:"受け取る時期",
+       word:"あなたの運は今、受け取る側に回っています。ただ、今のままでは受け取れません。",
+       body:[
+         "人のためには動けるのに、自分のことはいつも後回し。私ばかり、と思うことがある。それでも受け取る時期には、これまで出してきた分が、すぐ近くまで返ってきています。",
+         "でも、この時期の運は、遠慮する人の前を素通りします。悪いからと断る。すぐにお返しをしようとする。人に回してしまう。そうしているうちに、この時期は終わってしまいます。" ],
+       ng:"来た話を、考えすぎて断ること。この時期に来る誘いや頼みごとには、次の運の入口がまじっています。全部を受けなくてもかまいませんが、最初から断るくせは、この時期だけは置いておいてください。",
+       step:"今週、誘われたことや、すすめられたことを、一つだけ断らずに受けてください。ほめられたら、打ち消さずに「ありがとう」で止めてください。" },
+  d: { type:"整える時期",
+       word:"あなたの運は今、いったん立ち止まるように言っています。",
+       body:[
+         "疲れが抜けない。人に会うのがおっくう。何を始めても続かない。整える時期には、そういうことが重なります。",
+         "この時期に無理に動くと、空回りします。始めたことが続かない。お金が思ったより出ていく。人と行き違う。運の流れと逆を向いている時に、起きやすいことです。今は、増やすより減らす時です。" ],
+       ng:"大きな買いもの、新しい契約、勢いで始めること。この時期に始めたものは、あとで手放すことになりやすいです。どうしても決めたいことは、次の時期まで待てないか、一度考えてください。",
+       step:"使っていない物を一つ、今日のうちに手放してください。予定も一つ減らしてください。空けた分にしか、次の運は入ってきません。" }
+};
+
+const ORDER = ["a","b","c","d"];
+let current = 0;
+let answers = [];
+let shuffled = [];
+
+const $ = id => document.getElementById(id);
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+  document.body.classList.toggle("hide-hero", id !== "screen-intro");
+  window.scrollTo({ top:0, behavior:"auto" });
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function start(){
+  count("start");
+  current = 0;
+  answers = [];
+  shuffled = QUESTIONS.map(() => shuffle(ORDER));
+  show("screen-quiz");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  $("progressText").textContent = (current + 1) + " / " + QUESTIONS.length;
+  $("progressBar").style.width = (current / QUESTIONS.length * 100) + "%";
+  $("qText").textContent = item.q;
+  $("backBtn").style.visibility = current === 0 ? "hidden" : "visible";
+  const box = $("options");
+  box.innerHTML = "";
+  shuffled[current].forEach(key => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "opt" + (answers[current] === key ? " picked" : "");
+    b.textContent = item.o[key];
+    b.addEventListener("click", () => pick(key, b));
+    box.appendChild(b);
+  });
+}
+
+function pick(key, btn){
+  answers[current] = key;
+  btn.classList.add("picked");
+  setTimeout(() => {
+    if(current < QUESTIONS.length - 1){ current++; renderQuestion(); }
+    else{ seeing(); }
+  }, 180);
+}
+
+function back(){
+  if(current > 0){ current--; renderQuestion(); }
+}
+
+/* いちばん多く選んだもの。同点は Q8 → Q1 → a,b,c,d の順で決める */
+function decide(){
+  const score = { a:0, b:0, c:0, d:0 };
+  answers.forEach(k => { score[k]++; });
+  const max = Math.max(...ORDER.map(k => score[k]));
+  const top = ORDER.filter(k => score[k] === max);
+  if(top.length === 1) return top[0];
+  const last = answers[answers.length - 1];
+  if(top.includes(last)) return last;
+  if(top.includes(answers[0])) return answers[0];
+  return top[0];
+}
+
+/* 結果の前に、少し間を置く */
+function seeing(){
+  show("screen-seeing");
+  const t = $("seeingText");
+  t.textContent = "読んでいます……";
+  setTimeout(() => { t.textContent = "あなたの時期が、見えてきました。"; }, 3000);
+  setTimeout(showResult, 6000);
+}
+
+function showResult(){
+  const key = decide();
+  const r = RESULTS[key];
+  setupLine();
+  count("finish", r.type);
+  $("resultType").textContent = r.type;
+  $("resultWord").textContent = r.word;
+  $("resultBody").innerHTML = "";
+  r.body.forEach(t => { const p = document.createElement("p"); p.textContent = t; $("resultBody").appendChild(p); });
+  $("resultNg").textContent = r.ng;
+  $("resultStep").textContent = r.step;
+  show("screen-result");
+}
+
+function setupLine(){
+  const btn = $("lineBtn");
+  const note = $("lineNote");
+  if(LINE_URL){
+    btn.href = LINE_URL;
+    btn.removeAttribute("aria-disabled");
+    note.hidden = true;
+  }else{
+    btn.setAttribute("aria-disabled", "true");
+    btn.removeAttribute("href");
+    note.hidden = false;
+  }
+}
+
+$("startBtn").addEventListener("click", start);
+$("lineBtn").addEventListener("click", () => { count("line", $("resultType").textContent); });
+$("backBtn").addEventListener("click", back);
+$("retryBtn").addEventListener("click", () => show("screen-intro"));
+</script>
+</body>
+</html>
